@@ -9,6 +9,9 @@ document.querySelector("button").addEventListener("click", element => {
     circle.style.left = insideBtnLeft + "px";
     element.target.appendChild(circle);
     setTimeout(element.target.style.opacity = "0", 300);
-    setTimeout(() => element.target.remove(), 600);
+    setTimeout(() => {
+        element.target.remove();
+        document.querySelector(".roller").style.display = "block";
+    }, 600);
     new GitHubClient();
 });
