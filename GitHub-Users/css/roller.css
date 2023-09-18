@@ -17,7 +17,7 @@
     width: 7px;
     height: 7px;
     margin: -4px 0 0 -4px;
-    background-color: var(--roller);
+    background-color: var(--text);
     border-radius: 50%;
 }
 
