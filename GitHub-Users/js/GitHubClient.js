@@ -7,45 +7,37 @@ export class GitHubClient {
     constructor() {
         this.#header = document.querySelector("header");
         this.#main = document.querySelector("main");
-        //tutaj
         setTimeout(() => {
             this.#Init().then(response => this.#Success(response)).catch(error => this.#Fail(error));
         }, 2400);
-        //tutaj
     }
 
-    //tutaj
     #Init() {
-        return new Promise(function (resolve, reject) { //xhr response type json
-            const xhr = new XMLHttpRequest();
-            xhr.getResponseHeader("Content-type", "application/json");
-            xhr.open("GET", "https://api.github.com/users", true);
-            xhr.send();
-            xhr.onload = function () {
-                if (this.status == 200) {
-                    const users = JSON.parse(this.responseText);
-                    let htmlCode = document.createElement("main");
-                    users.forEach(element => {
-                        htmlCode.appendChild(GitHubClient.UserBox(element));
-                    });
-                    resolve(htmlCode);
-                }
-                else {
-                    const text = JSON.parse(this.responseText);
-                    reject("Could not connect to server. Check your connection to the internet.");
-                }
-            }
+        return new Promise(function (resolve, reject) {
+            const xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.responseType = "json";
+            xmlHttpRequest.getResponseHeader("Content-type", "application/json");
+            xmlHttpRequest.open("GET", "https://api.github.com/users", true);
 
-            xhr.onerror = function () {
-                reject("Could not connect to server. Check your connection to the internet.");
-            }
+            xmlHttpRequest.onload = function () {
+                if (this.status >= 200 && this.status < 300) {
+                    const users = this.response;
+                    const usersDOM = document.createElement("div");
+                    //tutaj
+                    users.forEach(user => usersDOM.appendChild(GitHubClient.UserBox(user)));
+                    //tutaj
+                    resolve(usersDOM);
+                }
+                else reject("Could not connect to server. Check your connection to the internet.");
+            };
 
-            xhr.onreadystatechange = function () {
-                console.log("State: " + xhr.readyState);
-            }
+            xmlHttpRequest.onerror = function () {
+                reject("The application encountered a problem while running. Please try again later.");
+            };
+
+            xmlHttpRequest.send();
         });
     }
-    //tutaj
 
     #PrepareDOM() {
         this.#header.childNodes.forEach(node => node.remove());
