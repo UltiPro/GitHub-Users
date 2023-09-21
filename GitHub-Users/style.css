@@ -1,11 +1,9 @@
-/* tutaj */
-
 :root {
     --background: #3a86ff;
     --text: #fff;
     --button: #fb5607;
     --border: #ffbe0b;
-    --userBox: #333;
+    --box: #333;
     --error: #e51022;
 }
 
@@ -32,6 +30,8 @@ body {
 header {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
     min-width: 100%;
 }
 
@@ -44,16 +44,15 @@ main {
 
 button {
     position: relative;
-    padding: 1em 2em;
+    padding: 1rem 2rem;
     color: var(--text);
     font-weight: bold;
     background-color: var(--button);
     border: 0.15rem solid var(--border);
-    border-radius: 2em;
+    border-radius: 2rem;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
     cursor: pointer;
     overflow: hidden;
-    outline: none;
     transition: all .3s linear;
 }
 
@@ -61,19 +60,15 @@ button:hover {
     border-color: var(--button);
 }
 
-button:focus {
-    outline: none;
-}
-
 input[type="text"] {
-    margin: 2rem 0 0.5rem 0;
+    margin-top: 2rem;
     padding: 0.5rem 1rem;
     color: var(--text);
-    font-size: 1rem;
+    font-size: 1.2rem;
     border: 1px solid var(--text);
-    background-color: var(--userBox);
+    background-color: var(--box);
     border-radius: 1rem;
-    box-shadow: 0px 0px 10px 3px var(--userBox);
+    box-shadow: 0 0 10px 3px var(--box);
     outline: none;
 }
 
@@ -83,8 +78,6 @@ input[type="text"] {
 
 .circle {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 80px;
     height: 80px;
     background-color: var(--text);
@@ -95,41 +88,53 @@ input[type="text"] {
 
 @keyframes zoom {
     to {
-        transform: translate(-50%, -50%) scale(2);
+        transform: translate(-50%, -50%) scale(3);
         opacity: 0;
     }
 }
 
 .user-box {
-    width: 10rem;
-    height: 20rem;
+    width: 160px;
     margin: 1rem;
-    background-color: var(--userBox);
-    border: 0.075rem solid var(--border);
+    background-color: var(--box);
+    border: 1px solid var(--text);
     border-radius: 1rem;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px 2px var(--box);
 }
 
-.user-box-img {
+.user-box a {
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+.user-box a img {
     width: 100%;
+    border-bottom: 1px solid var(--text);
     border-radius: 1rem 1rem 0 0;
 }
 
-.user-box-body {}
+.user-box a div {
+    padding: 0.25rem 0 0.75rem 0.75rem;
+    text-align: start;
+    line-height: 1.4rem;
+}
+
+.user-box a div span {
+    color: gray;
+}
 
 .error-box {
     max-width: 400px;
     padding: 1rem 2rem;
-    color: var(--text);
     font-size: 1.5rem;
-    background-color: var(--userBox);
-    border: 0.05rem solid var(--error);
+    background-color: var(--box);
+    border: 1px solid var(--error);
     border-radius: 1rem;
-    box-shadow: 1px 1px 5px 2.5px var(--userBox);
+    box-shadow: 0 0 10px 3px var(--box);
 }
 
 .error-box div {
     margin-bottom: 1rem;
 }
-
-/* tutaj */
