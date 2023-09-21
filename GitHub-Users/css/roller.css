@@ -1,6 +1,4 @@
 .roller {
-    display: inline-block;
-    position: relative;
     width: 80px;
     height: 80px;
 }
@@ -12,7 +10,6 @@
 
 .roller div:after {
     content: " ";
-    display: block;
     position: absolute;
     width: 7px;
     height: 7px;
