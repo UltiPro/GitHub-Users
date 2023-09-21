@@ -116,7 +116,7 @@ input[type="text"] {
 }
 
 .user-box a div {
-    padding: 0.25rem 0 0.75rem 0.75rem;
+    padding: 0.25rem 0 0.5rem 0.75rem;
     text-align: start;
     line-height: 1.4rem;
 }
