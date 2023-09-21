@@ -1,38 +1,42 @@
 import { ButtonAnimation } from "./ButtonAnimation.js";
 
 export class GitHubClient {
+    static #url = "https://api.github.com/users";
     #header;
     #main;
 
     constructor() {
         this.#header = document.querySelector("header");
         this.#main = document.querySelector("main");
-        setTimeout(() => {
-            this.#Init().then(response => this.#Success(response)).catch(error => this.#Fail(error));
-        }, 2400);
+        setTimeout(() => this.#Init(), 2400);
     }
 
-    #Init() {
+    async #Init() {
+        try {
+            const users = await this.#InitData();
+            const usersDOM = document.createElement("div");
+            users.forEach(user => usersDOM.appendChild(GitHubClient.UserBox(user)));
+            this.#Success(usersDOM);
+        }
+        catch (error) {
+            this.#Fail(error.message);
+        }
+    }
+
+    #InitData() {
         return new Promise(function (resolve, reject) {
             const xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.responseType = "json";
             xmlHttpRequest.getResponseHeader("Content-type", "application/json");
-            xmlHttpRequest.open("GET", "https://api.github.com/users", true);
+            xmlHttpRequest.open("GET", GitHubClient.#url, true);
 
             xmlHttpRequest.onload = function () {
-                if (this.status >= 200 && this.status < 300) {
-                    const users = this.response;
-                    const usersDOM = document.createElement("div");
-                    //tutaj
-                    users.forEach(user => usersDOM.appendChild(GitHubClient.UserBox(user)));
-                    //tutaj
-                    resolve(usersDOM);
-                }
-                else reject("Could not connect to server. Check your connection to the internet.");
+                if (this.status >= 200 && this.status < 300) resolve(this.response);
+                else reject(new Error("The application encountered a problem while running. Please try again later."));
             };
 
             xmlHttpRequest.onerror = function () {
-                reject("The application encountered a problem while running. Please try again later.");
+                reject(new Error("Could not connect to server. Check your connection to the internet."));
             };
 
             xmlHttpRequest.send();
@@ -44,14 +48,14 @@ export class GitHubClient {
         this.#main.style.display = "block";
     }
 
-    #Success(users) {
+    #Success(usersBox) {
         this.#PrepareDOM();
         this.#header.classList.add("header-after");
         const searchInput = document.createElement("input");
         searchInput.setAttribute("type", "text");
         searchInput.addEventListener("keyup", input => this.#FindUser(input.target.value));
         this.#header.appendChild(searchInput);
-        this.#main.appendChild(users);
+        this.#main.appendChild(usersBox);
     }
 
     #Fail(info) {
@@ -71,9 +75,20 @@ export class GitHubClient {
 
     //tutaj
     #FindUser(find) {
-        console.log(find)
-    }
+        return fetch(GitHubClient.#url + "/find", {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json"
+            }
+        }).then(response => {
+            return response.json();
+        }).catch(error => {
 
+        });
+    }
+    //tutaj
+
+    //tutaj
     static UserBox(userData) {
         const userBox = document.createElement('div');
         userBox.classList.add("user-box");
