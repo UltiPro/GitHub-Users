@@ -106,20 +106,20 @@ export class GitHubClient {
         document.body.insertBefore(this.#main, this.#footer);
         if (this.#roller.parentElement != this.#header) this.#header.appendChild(this.#roller);
         this.#roller.style.display = "block";
-        try {
-            if (find == "") {
-                this.#lastUserId = 0;
-                this.#LoadMore();
-            }
-            else {
+        if (find == "") {
+            this.#lastUserId = 0;
+            this.#LoadMore();
+        }
+        else {
+            try {
                 const user = await this.#FindUserRequest(find);
                 this.#main.appendChild(GitHubClient.#UserBox(user));
                 this.#roller.style.display = "none";
             }
-        }
-        catch (error) {
-            this.#roller.style.display = "none";
-            console.log(error.message);
+            catch (error) {
+                this.#roller.style.display = "none";
+                console.log(error.message);
+            }
         }
     }
 
