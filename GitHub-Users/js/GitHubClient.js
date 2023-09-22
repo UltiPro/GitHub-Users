@@ -7,6 +7,7 @@ export class GitHubClient {
     #main;
     #footer;
     #roller;
+    #typingTimer;
 
     constructor() {
         this.#lastUserId = 0;
@@ -33,10 +34,14 @@ export class GitHubClient {
         this.#lastUserId = users[99].id;
         this.#roller.style.display = "none";
         this.#footer.appendChild(this.#roller);
-        this.#header.classList.add("header-after");
+        document.body.style.justifyContent = "start";
         const searchInput = document.createElement("input");
         searchInput.setAttribute("type", "text");
-        searchInput.addEventListener("keyup", input => this.#FindUser(input.target.value));
+        searchInput.addEventListener("keydown", clearTimeout.bind(this.#typingTimer));
+        searchInput.addEventListener("keyup", input => {
+            clearTimeout(this.#typingTimer);
+            this.#typingTimer = setTimeout(() => this.#FindUser(input.target.value), 2000);
+        });
         this.#header.insertBefore(searchInput, this.#header.firstChild);
         users.forEach(user => this.#main.appendChild(GitHubClient.#UserBox(user)));
         this.#roller.style.display = "block";
@@ -67,6 +72,7 @@ export class GitHubClient {
             xmlHttpRequest.onload = function () {
                 if (this.status == 200) resolve(this.response);
                 else if (this.status == 403) reject(new Error("API rate limit exceeded. Please try again later."));
+                else if (this.status == 404) reject(new Error("Error 404. Server not found."));
                 else reject(new Error("The application encountered a problem while running. Please try again later."));
             };
 
@@ -94,34 +100,31 @@ export class GitHubClient {
         }
     }
 
-    //tutaj
     async #FindUser(find) {
+        this.#main.remove();
+        this.#main = document.createElement("main");
+        document.body.insertBefore(this.#main, this.#footer);
+        if (this.#roller.parentElement != this.#header) this.#header.appendChild(this.#roller);
+        this.#roller.style.display = "block";
         try {
-            this.#main.remove();
-            this.#main = document.createElement("main");
-            document.body.insertBefore(this.#main, this.#footer);
-            if (this.#roller.parentElement != this.#header) {
-                this.#header.appendChild(this.#roller);
-            }
-            this.#roller.style.display = "block";
             if (find == "") {
                 this.#lastUserId = 0;
-                const users = await this.#GetUsersData(this.#lastUserId);
-                this.#lastUserId = users[99].id;
-                users.forEach(user => this.#main.appendChild(GitHubClient.#UserBox(user)));
-            } else {
-                const user = this.#FindUserRequest(find);
-                this.#main.appendChild(GitHubClient.#UserBox(user));
+                this.#LoadMore();
             }
-            this.#roller.style.display = "none";
+            else {
+                const user = await this.#FindUserRequest(find);
+                this.#main.appendChild(GitHubClient.#UserBox(user));
+                this.#roller.style.display = "none";
+            }
         }
         catch (error) {
-            console.log(error.message)
+            this.#roller.style.display = "none";
+            console.log(error.message);
         }
     }
 
-    async #FindUserRequest(find) {
-        return await fetch(GitHubClient.#url + `/${find}`, {
+    #FindUserRequest(find) {
+        return fetch(GitHubClient.#url + `/${find}`, {
             method: "GET",
             headers: {
                 "Content-type": "application/json"
@@ -129,13 +132,12 @@ export class GitHubClient {
         }).then(response => {
             if (response.status == 200) return response.json();
             else if (response.status == 403) throw new Error("API rate limit exceeded. Please try again later.");
-            else if (response.status == 404) throw new Error("404 User Not Found."); // tutaj
-            else throw new Error("The application encountered a problem while running. Please try again later.");
-        }).catch(_ => {
-            throw new Error("Could not connect to server. Check your connection to the internet.");
+            else if (response.status == 404) throw new Error("Error 404. User not found.");
+            else throw new Error("Could not connect to server. Check your connection to the internet.");
+        }).catch(error => {
+            throw error;
         });
     }
-    //tutaj
 
     static #UserBox(userData) {
         const userBox = document.createElement("div");
