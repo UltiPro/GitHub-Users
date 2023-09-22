@@ -1,6 +1,7 @@
 .roller {
     width: 80px;
     height: 80px;
+    margin-bottom: 1rem;
 }
 
 .roller div {
