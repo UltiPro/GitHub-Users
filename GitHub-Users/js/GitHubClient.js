@@ -3,30 +3,26 @@ import { ButtonAnimation } from "./ButtonAnimation.js";
 export class GitHubClient {
     static #url = "https://api.github.com/users";
     #lastUserId;
-    //tutaj
     #header;
-    #roller;
     #main;
     #footer;
+    #roller;
 
     constructor() {
         this.#lastUserId = 0;
         this.#header = document.querySelector("header");
-        this.#roller = this.#header.querySelector(".roller");
         this.#main = document.querySelector("main");
         this.#footer = document.querySelector("footer");
-        addEventListener("scrollend", () => {
-            if ((window.innerHeight + Math.round(window.scrollY)) >= document.body.offsetHeight) {
-                this.#LoadMore();
-            }
-        });
+        this.#roller = this.#header.querySelector(".roller");
         setTimeout(() => this.#Init(), 2400);
-        //tutaj
     }
 
     async #Init() {
         try {
             this.#Success(await this.#GetUsersData(this.#lastUserId));
+            addEventListener("scrollend", () => {
+                if (window.innerHeight + Math.round(window.scrollY) + 120 >= document.body.offsetHeight) this.#LoadMore();
+            });
         }
         catch (error) {
             this.#Fail(error.message);
@@ -83,32 +79,46 @@ export class GitHubClient {
     }
 
     async #LoadMore() {
+        if (this.#roller.parentElement != this.#footer) {
+            this.#footer.appendChild(this.#roller);
+            this.#roller.style.display = "block";
+        }
         try {
-            if (this.#roller.parentElement != this.#footer) {
-                this.#footer.appendChild(this.#roller);
-                this.#roller.style.display = "block";
-            }
             const users = await this.#GetUsersData(this.#lastUserId);
             this.#lastUserId = users[99].id;
             users.forEach(user => this.#main.appendChild(GitHubClient.#UserBox(user)));
         }
         catch (error) {
-            //tutaj
-            console.log(error);
-            //tutaj
+            this.#roller.style.display = "none";
+            console.log(error.message);
         }
     }
 
     //tutaj
-    #FindUser(find) {
+    async #FindUser(find) {
         try {
-            const users = this.#FindUserRequest(find);
+            this.#main.remove();
+            this.#main = document.createElement("main");
+            document.body.insertBefore(this.#main, this.#footer);
+            if (this.#roller.parentElement != this.#header) {
+                this.#header.appendChild(this.#roller);
+            }
+            this.#roller.style.display = "block";
+            if (find == "") {
+                this.#lastUserId = 0;
+                const users = await this.#GetUsersData(this.#lastUserId);
+                this.#lastUserId = users[99].id;
+                users.forEach(user => this.#main.appendChild(GitHubClient.#UserBox(user)));
+            } else {
+                const user = this.#FindUserRequest(find);
+                this.#main.appendChild(GitHubClient.#UserBox(user));
+            }
+            this.#roller.style.display = "none";
         }
         catch (error) {
-
+            console.log(error.message)
         }
     }
-    //tutaj
 
     async #FindUserRequest(find) {
         return await fetch(GitHubClient.#url + `/${find}`, {
@@ -119,11 +129,13 @@ export class GitHubClient {
         }).then(response => {
             if (response.status == 200) return response.json();
             else if (response.status == 403) throw new Error("API rate limit exceeded. Please try again later.");
+            else if (response.status == 404) throw new Error("404 User Not Found."); // tutaj
             else throw new Error("The application encountered a problem while running. Please try again later.");
         }).catch(_ => {
             throw new Error("Could not connect to server. Check your connection to the internet.");
         });
     }
+    //tutaj
 
     static #UserBox(userData) {
         const userBox = document.createElement("div");
