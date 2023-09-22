@@ -76,10 +76,6 @@ input[type="text"] {
     outline: none;
 }
 
-.header-after {
-    align-self: flex-start;
-}
-
 .circle {
     position: absolute;
     width: 80px;
