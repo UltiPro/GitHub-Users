@@ -42,6 +42,10 @@ main {
     margin-top: 1rem;
 }
 
+footer {
+    justify-self: end;
+}
+
 button {
     position: relative;
     padding: 1rem 2rem;
