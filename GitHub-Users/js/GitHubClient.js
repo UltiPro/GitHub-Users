@@ -40,7 +40,7 @@ export class GitHubClient {
         searchInput.addEventListener("keydown", clearTimeout.bind(this.#typingTimer));
         searchInput.addEventListener("keyup", input => {
             clearTimeout(this.#typingTimer);
-            this.#typingTimer = setTimeout(() => this.#FindUser(input.target.value), 2000);
+            this.#typingTimer = setTimeout(() => this.#FindUser(input.target.value), 1200);
         });
         this.#header.insertBefore(searchInput, this.#header.firstChild);
         users.forEach(user => this.#main.appendChild(GitHubClient.#UserBox(user)));
