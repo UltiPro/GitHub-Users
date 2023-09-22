@@ -22,7 +22,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     color: var(--text);
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     text-align: center;
     background-color: var(--background);
 }
