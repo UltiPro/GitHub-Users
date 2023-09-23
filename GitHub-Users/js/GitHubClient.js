@@ -101,7 +101,6 @@ export class GitHubClient {
         this.#main.remove();
         this.#main = document.createElement("main");
         document.body.insertBefore(this.#main, this.#footer);
-
         this.#roller.style.display = "block";
         if (find == "") {
             this.#lastUserId = 0;
