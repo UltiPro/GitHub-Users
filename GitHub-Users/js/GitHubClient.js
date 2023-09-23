@@ -21,7 +21,7 @@ export class GitHubClient {
     async #Init() {
         try {
             this.#Success(await this.#GetUsersData(this.#lastUserId));
-            addEventListener("scrollend", () => {
+            addEventListener("scroll", () => {
                 if (window.innerHeight + Math.round(window.scrollY) + 120 >= document.body.offsetHeight) this.#LoadMore();
             });
         }
@@ -85,10 +85,7 @@ export class GitHubClient {
     }
 
     async #LoadMore() {
-        if (this.#roller.parentElement != this.#footer) {
-            this.#footer.appendChild(this.#roller);
-            this.#roller.style.display = "block";
-        }
+        this.#roller.style.display = "block";
         try {
             const users = await this.#GetUsersData(this.#lastUserId);
             this.#lastUserId = users[99].id;
@@ -104,7 +101,7 @@ export class GitHubClient {
         this.#main.remove();
         this.#main = document.createElement("main");
         document.body.insertBefore(this.#main, this.#footer);
-        if (this.#roller.parentElement != this.#header) this.#header.appendChild(this.#roller);
+
         this.#roller.style.display = "block";
         if (find == "") {
             this.#lastUserId = 0;
